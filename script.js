@@ -10,6 +10,10 @@ let loadPokemonStartID = 1;
 
 let unlockOnscroll; //lock and unlock onscroll function
 
+let toggleDetails = [];
+let detailTrigger;
+let openDetailActive;
+
 function onload() {
   unlockOnscroll = 1
   getMaxPokemonNumber();
@@ -48,13 +52,23 @@ async function loadPokemon() {
     let currentPokemontypeOne = currentPokemon['types']['0']['type']['name'];
 
     document.getElementById('content').innerHTML += `
-        <div class="pokemon" id="pokemon" onclick="showDetails(${currentPokemon['id']})">
-          <div class="container">
+        <div class="pokemon" id="pokemon" onclick="chooseDetail(${currentPokemon['id']})">
+          <div class="chooseDetail" id="showDetailOne${currentPokemon['id']}" onclick="openDetail('One', ${currentPokemon['id']})">
+            About
+          </div>
+          <div class="chooseDetail" id="showDetailTwo${currentPokemon['id']}" onclick="openDetail('Two', ${currentPokemon['id']})">
+            Stats
+          </div>
+          <div class="chooseDetail" id="showDetailThree${currentPokemon['id']}" onclick="openDetail('Three', ${currentPokemon['id']})">
+            Moves
+          </div>
+          <div class="container" id="container">
             <div class="container-inner">
               <img class="circle" src="img/types/${currentPokemontypeOne}.svg">
-              <img class="img img1" src="${currentPokemon['sprites']['other']['official-artwork']['front_default']}">
-            </div>
+              <img class="img img1" src="${currentPokemon['sprites']['other']['official-artwork']['front_default']}">           
+            </div>            
           </div>
+          
           <div class="pokemonTypes" id="PokemonTypes${loadPokemonStartID}"></div>
           <div class="divider"></div>
             <div class="name">${currentPokemonName}</div>
@@ -66,8 +80,8 @@ async function loadPokemon() {
 
   if (loadPokemonEndID >= maxPokemonNumber) {
   } else {
-      unlockOnscroll = 1;
-    }
+    unlockOnscroll = 1;
+  }
 
   removeLoadingScreen();
 }
@@ -86,15 +100,15 @@ function removeLoadingScreen() {
 }
 
 
-async function showDetails(currentPokemonId){
+async function showDetails(currentPokemonId) {
   document.getElementById('body').classList.add('overflowHidden');
 
   let singlePokemonUrl = (`${URL_API}` + `${currentPokemonId}`)
-    let response = await fetch(singlePokemonUrl);
-    let currentPokemon = await response.json();
+  let response = await fetch(singlePokemonUrl);
+  let currentPokemon = await response.json();
 
-    let currentPokemontypeOne = currentPokemon['types']['0']['type']['name'];
-    
+  let currentPokemontypeOne = currentPokemon['types']['0']['type']['name'];
+
 
   document.getElementById('content').innerHTML += `
   <div class="loadingScreen" id="detailBackground${currentPokemonId}">
@@ -107,10 +121,36 @@ async function showDetails(currentPokemonId){
   `;
 }
 
+function chooseDetail(id) {
+  if (toggleDetails[id] != 1 ) {
+    document.getElementById('showDetailOne' + id).classList.add('showDetailOne');
+    document.getElementById('showDetailTwo' + id).classList.add('showDetailTwo');
+    document.getElementById('showDetailThree' + id).classList.add('showDetailThree');
+    toggleDetails[id] = 1;
+  } else {
+    document.getElementById('showDetailOne' + id).classList.remove('showDetailOne');
+    document.getElementById('showDetailTwo' + id).classList.remove('showDetailTwo');
+    document.getElementById('showDetailThree' + id).classList.remove('showDetailThree');
+    toggleDetails[id] = 0;
+  }
+}
 
-function closeDetails(currentPokemonId){
+function openDetail(number, id) {
+  if (openDetailActive != 1) {
+    document.getElementById('showDetail' + number + id).classList.remove('showDetail' + number + id);
+    document.getElementById('showDetail' + number + id).classList.add('openDetail');
+    openDetailActive = 1;
+  }else{
+    document.getElementById('showDetail' + number + id).classList.remove('openDetail')
+    document.getElementById('showDetail' + number + id).classList.add('showDetail' + number + id);
+    openDetailActive = 0;
+  }
+  
+}
+
+function closeDetails(currentPokemonId) {
   console.log('!')
-  document.getElementById('detailBackground'+currentPokemonId).remove();
+  document.getElementById('detailBackground' + currentPokemonId).remove();
   document.getElementById('body').classList.remove('overflowHidden');
   // document.getElementById('detailsSinglePokemon'+currentPokemonId).remove();
 }
