@@ -416,6 +416,7 @@ body{
     border-radius: 5px;
     top: 0;
     left: 0;
+    -webkit-backdrop-filter: blur(10px);
   }
 
   .closeDetail{
