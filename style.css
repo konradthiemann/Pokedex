@@ -7,7 +7,7 @@ body{
 
 .bodyBackground{
     width: 100%;
-    height: 100vh;
+    height: 110%;
     position: fixed;
     object-fit: cover;
     opacity: 0.9;
@@ -361,7 +361,7 @@ body{
     left: 60px;
     top: 253px;
     z-index: 1;
-    transition: 350ms;
+    transition: 350ms ease-in-out;
   }
 
   .showDetailTwo{
@@ -371,7 +371,7 @@ body{
     left: 120px;
     top: 269px;
     z-index: 1;
-    transition: 350ms;
+    transition: 350ms ease-in-out 50ms;
   }
 
   .showDetailThree{
@@ -381,7 +381,7 @@ body{
     left: 180px;
     top: 253px;
     z-index: 1;
-    transition: 350ms;
+    transition: 350ms ease-in-out 100ms;
   }
 
   .showDetailOne:hover{

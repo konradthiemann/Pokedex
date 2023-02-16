@@ -2,6 +2,8 @@ const URL_MAX_POKEMON_NUMBER = 'https://pokeapi.co/api/v2/pokemon/';
 const URL_API = 'https://pokeapi.co/api/v2/pokemon/';
 const URL_POKEMON_SPECIES = 'https://pokeapi.co/api/v2/pokemon-species/';
 
+
+
 let evolutionChainURL;
 let maxPokemonNumber;
 
@@ -12,7 +14,7 @@ let unlockOnscroll; //lock and unlock onscroll function
 
 let toggleDetails = [];
 let detailTrigger;
-let openDetailActive;
+let openDetailActive = [];
 
 function onload() {
   unlockOnscroll = 1
@@ -32,31 +34,22 @@ async function loadPokemon() {
 
   startLoadingScreen()
 
-  // if (loadPokemonEndID > maxPokemonNumber) {
-  //   loadPokemonEndID = maxPokemonNumber;
-  // }
-
   for (loadPokemonStartID; loadPokemonStartID <= loadPokemonEndID; loadPokemonStartID++) {
 
     let singlePokemonUrl = (`${URL_API}` + `${loadPokemonStartID}`)
     let response = await fetch(singlePokemonUrl);
     let currentPokemon = await response.json();
 
-    let singlePokemonUrlSpecies = (`${URL_POKEMON_SPECIES}` + `${loadPokemonStartID}`)
-    let responseSpecies = await fetch(singlePokemonUrlSpecies);
-    let currentPokemonSpecies = await responseSpecies.json();
-
-    evolutionChainURL = currentPokemonSpecies.evolution_chain['url'];
 
     let currentPokemonName = currentPokemon['name'].charAt(0).toUpperCase() + currentPokemon['name'].slice(1);
     let currentPokemontypeOne = currentPokemon['types']['0']['type']['name'];
 
     document.getElementById('content').innerHTML += `
         <div class="pokemon" id="pokemon" onclick="chooseDetail(${currentPokemon['id']})">
-          <div class="chooseDetail" id="showDetailOne${currentPokemon['id']}" onclick="openDetail('One', ${currentPokemon['id']})">
+          <div class="chooseDetail" id="showDetailOne${currentPokemon['id']}" onclick="openAbout('One', ${currentPokemon['id']})">
             About
           </div>
-          <div class="chooseDetail" id="showDetailTwo${currentPokemon['id']}" onclick="openDetail('Two', ${currentPokemon['id']})">
+          <div class="chooseDetail" id="showDetailTwo${currentPokemon['id']}" onclick="openStats('Two', ${currentPokemon['id']})">
             Stats
           </div>
           <div class="chooseDetail" id="showDetailThree${currentPokemon['id']}" onclick="openDetail('Three', ${currentPokemon['id']})">
@@ -136,17 +129,161 @@ function chooseDetail(id) {
 }
 
 function openDetail(number, id) {
-  if (openDetailActive != 1) {
+  if (openDetailActive[id] != 1) {
     document.getElementById('showDetail' + number + id).classList.remove('showDetail' + number + id);
     document.getElementById('showDetail' + number + id).classList.add('openDetail');
-    openDetailActive = 1;
+    openDetailActive[id] = 1;
   }else{
     document.getElementById('showDetail' + number + id).classList.remove('openDetail')
     document.getElementById('showDetail' + number + id).classList.add('showDetail' + number + id);
-    openDetailActive = 0;
+    openDetailActive[id] = 0;
   }
-  
 }
+
+
+
+function openAbout(number, id) {
+  if (openDetailActive[id] != 1) {
+    document.getElementById('showDetail' + number + id).classList.remove('showDetail' + number + id);
+    document.getElementById('showDetail' + number + id).classList.add('openDetail');
+    document.getElementById('showDetail' + number + id).innerHTML = `
+    <div class="headlineDetails" id="headlineDetails">
+      About
+    </div>
+    <div class="aboutValues" id="aboutValues${id}"></div>
+    <div class="headlineEvolutionChain" id="headlineEvolutionChain">evolution chain</div>
+    <div class="evolutionChain" id="evolutionChain${id}"></div>
+    `;
+
+    createAboutValues(id);
+    createEvolutionChain(id);
+
+    openDetailActive[id] = 1;
+  }else{
+    document.getElementById('showDetail' + number + id).classList.remove('openDetail')
+    document.getElementById('showDetail' + number + id).classList.add('showDetail' + number + id);
+    document.getElementById('showDetail' + number + id).innerHTML = `about`;
+    openDetailActive[id] = 0;
+  }
+}
+
+async function createAboutValues(id){
+  let singlePokemonUrl = (`${URL_API}` + `${id}`)
+    let response = await fetch(singlePokemonUrl);
+    let currentPokemon = await response.json();
+
+    document.getElementById('aboutValues'+ id).innerHTML += `
+    <div class="aboutValue">
+      <div class="valueName">
+        height:
+      </div>
+      <div class="value">
+        ${currentPokemon['height']}0cm
+      </div>
+    </div>
+    `;
+
+    document.getElementById('aboutValues'+ id).innerHTML += `
+    <div class="aboutValue">
+      <div class="valueName">
+        weight:
+      </div>
+      <div class="value">
+        ${currentPokemon['weight']}g
+      </div>
+    </div>
+    `;
+
+    document.getElementById('aboutValues'+ id).innerHTML += `
+    <div class="aboutValue">
+      <div class="valueName">
+        abilities:
+      </div>
+      <div class="value" id="abilities${id}">
+      </div>
+    </div>
+    `;
+    
+    let abilities = '';
+    for (let i = 0; i < currentPokemon['abilities'].length; i++) {
+      let ability = currentPokemon['abilities'][i]['ability']['name'];
+      abilities += `${ability}, `;
+    }
+    abilities = abilities.slice(0, -2);
+    document.getElementById('abilities'+id).innerHTML = abilities;
+}
+
+async function createEvolutionChain(id){
+    let singlePokemonUrlSpecies = (`${URL_POKEMON_SPECIES}` + id)
+    let responseSpecies = await fetch(singlePokemonUrlSpecies);
+    let currentPokemonSpecies = await responseSpecies.json();
+
+    evolutionChainURL = currentPokemonSpecies.evolution_chain['url'];
+
+    let singlePokemonEvolutionChain = (`${evolutionChainURL}`);
+    let response = await fetch(singlePokemonEvolutionChain);
+    let currentPokemonEvolutionChain = await response.json();
+
+    document.getElementById('evolutionChain'+ id).innerHTML += `${currentPokemonEvolutionChain['chain']['species']['name']}`;
+    
+    
+    let evolutionChain =  currentPokemonEvolutionChain['chain']['evolves_to'];
+    if (evolutionChain[0]['evolves_to'].length == 0 ) {
+      document.getElementById('evolutionChain'+ id).innerHTML += `${currentPokemonEvolutionChain['chain']['evolves_to'][0]['species']['name']}`;
+    }
+    else if (evolutionChain[0]['evolves_to'].length > 0) {
+      console.log('Im in this if-condition');
+      document.getElementById('evolutionChain'+ id).innerHTML += `${currentPokemonEvolutionChain['chain']['evolves_to'][0]['species']['name']}`;
+      document.getElementById('evolutionChain'+ id).innerHTML += `${currentPokemonEvolutionChain['chain']['evolves_to'][0]['evolves_to'][0]['species']['name']}`;
+    }
+    
+}
+
+
+function openStats(number, id) {
+  
+  if (openDetailActive[id] != 1) {
+    document.getElementById('showDetail' + number + id).classList.remove('showDetail' + number + id);
+    document.getElementById('showDetail' + number + id).classList.add('openDetail');
+    document.getElementById('showDetail' + number + id).innerHTML = `
+    <canvas id="myChart${id}"></canvas>
+    `;
+    createChart(id);
+    openDetailActive[id] = 1;
+  }else{
+    document.getElementById('showDetail' + number + id).classList.remove('openDetail')
+    document.getElementById('showDetail' + number + id).classList.add('showDetail' + number + id);
+    document.getElementById('showDetail' + number + id).innerHTML = `
+    Stats
+    `;
+    openDetailActive[id] = 0;
+  }
+}
+
+
+
+
+
+function openMoves(number, id) {
+  if (openDetailActive[id] != 1) {
+    document.getElementById('showDetail' + number + id).classList.remove('showDetail' + number + id);
+    document.getElementById('showDetail' + number + id).classList.add('openDetail');
+    openDetailActive[id] = 1;
+  }else{
+    document.getElementById('showDetail' + number + id).classList.remove('openDetail')
+    document.getElementById('showDetail' + number + id).classList.add('showDetail' + number + id);
+    openDetailActive[id] = 0;
+  }
+}
+
+// open detail about
+    //height
+    //weight
+    //abilities
+// open detail base stats
+    //chartJS
+// open detail moves
+    //list
 
 function closeDetails(currentPokemonId) {
   console.log('!')
