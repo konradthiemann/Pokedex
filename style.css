@@ -3,6 +3,7 @@ body{
     display: flex;
     justify-content: center;
     overflow: auto;
+    font-family: 'Nunito Sans';
 }
 
 .bodyBackground{
@@ -53,7 +54,7 @@ body{
   padding: 1px;
 }
 
-.navbar button{
+/* .navbar button{
   background-color: rgba(69, 68, 68, 0.5);
   height: 30px;
   border-radius: 10px;
@@ -63,15 +64,15 @@ body{
   border-width: 2px;
   border-color: rgb(118, 118, 118);
   border-color: -internal-light-dark(rgb(118, 118, 118), rgb(133, 133, 133));
-}
+} */
 
-.navbar button:hover{
+/* .navbar button:hover{
   background-color: rgba(138, 137, 137, 0.5);
   height: 30px;
   border-radius: 10px;
   color: #d4d4d4;
   cursor: pointer;
-}
+} */
 
 .headline{
   color: #d4d4d4;
@@ -79,8 +80,6 @@ body{
   
   width: 80px;
 }
-
-
 
 .content{
     width: 70%;
@@ -435,6 +434,10 @@ body{
     cursor: pointer;
   }
 
+  .valueName{
+    margin-right: 5px;
+  }
+
   .evoImg{
     display: flex;
     object-fit: cover;
@@ -483,7 +486,7 @@ body{
     justify-content: space-evenly;
     display: flex;
     margin: 10px 5%;
-    max-height: 120px;
+    max-height: 100px;
     border-bottom: solid 1px 	rgba(255,255,255,0.5);
     border-right: solid 1px rgba(255,255,255,0.5);
     border-top: solid 1px rgba(0,0,0,0.2);
@@ -493,6 +496,7 @@ body{
 
   .evolutionChainPokemonContainer{
     text-align: center;
+    height: 95%;
   }
 
   .containerForMoves{

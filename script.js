@@ -79,6 +79,10 @@ async function loadPokemon() {
   removeLoadingScreen();
 }
 
+function returnPokemonHTML(){
+  
+}
+
 function startLoadingScreen() {
 
   document.getElementById('loadingScreen').classList.remove('hide');
@@ -318,6 +322,7 @@ function openStats(number, id) {
     document.getElementById('showDetail' + number + id).classList.remove('showDetail' + number + id);
     document.getElementById('showDetail' + number + id).classList.add('openDetail');
     document.getElementById('showDetail' + number + id).innerHTML = `
+    <div class="headlineDetails">Stats</div>
     <canvas id="myChart${id}"></canvas>
     `;
     createChart(id);
@@ -364,10 +369,6 @@ async function openMoves(number, id) {
     openDetailActive[id] = 0;
   }
 }
-
-
-// open detail moves
-    //list
 
 function closeDetails(currentPokemonId) {
   console.log('!')
