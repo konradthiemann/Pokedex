@@ -403,6 +403,7 @@ body{
   }
 
   .openDetail{
+    justify-content: center;
     backdrop-filter: blur(6px);
     display: flex;
     flex-direction: column;
@@ -434,5 +435,116 @@ body{
     cursor: pointer;
   }
 
+  .evoImg{
+    display: flex;
+    object-fit: cover;
+    width: 100%;
+    height: 85%;
+  }
 
-  /*remove container:hover*/
+  /*CSS About when open*/
+
+  .headlineDetails{
+	  text-align: center;
+    width: 100%;
+    font-size: 20px;
+    margin: 10px 0;
+  }
+
+.aboutValues{
+	  display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+.aboutValue{
+	display: flex;
+    width: 70%;
+    margin: 10px 10%;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: solid 1px 	rgba(255,255,255,0.5);
+    border-right: solid 1px rgba(255,255,255,0.5);
+    border-top: solid 1px rgba(0,0,0,0.2);
+    border-left: solid 1px rgba(0,0,0,0.2);
+    border-radius: 5px;
+  }
+
+.headlineEvolutionChain{
+	  width: 100%;
+    display: flex;
+    justify-content: center;
+    font-size: 17px;
+    margin: 10px 0;
+  }
+
+.evolutionChain{
+    width: 90%;
+    justify-content: space-evenly;
+    display: flex;
+    margin: 10px 5%;
+    max-height: 120px;
+    border-bottom: solid 1px 	rgba(255,255,255,0.5);
+    border-right: solid 1px rgba(255,255,255,0.5);
+    border-top: solid 1px rgba(0,0,0,0.2);
+    border-left: solid 1px rgba(0,0,0,0.2);
+    border-radius: 5px;
+  }
+
+  .evolutionChainPokemonContainer{
+    text-align: center;
+  }
+
+  .containerForMoves{
+    display: flex;
+    flex-wrap: wrap;
+    width: 90%;
+    height: 80%;
+    overflow-y: scroll;
+  }
+
+  .singleMove{
+    padding:2px 5px;
+    border-bottom: solid 1px 	rgba(255,255,255,0.5);
+    border-right: solid 1px rgba(255,255,255,0.5);
+    border-top: solid 1px rgba(0,0,0,0.2);
+    border-left: solid 1px rgba(0,0,0,0.2);
+    border-radius: 15px;
+    margin: 5px;
+  }
+
+  /*Scrollbar*/
+  /* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+/* button */
+::-webkit-scrollbar-button {
+  background: #222;
+  height: 7px; 
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 5px; 
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #666; 
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.5); 
+}
+/* The track NOT covered by the handle.
+::-webkit-scrollbar-track-piece {
+  background: #000; 
+}
+/* Corner */
+::-webkit-scrollbar-corner {
+  background: #999; 
+}
+/* Resizer */
+::-webkit-resizer {
+  background: rgba(0,0,0,0.5); 
+}

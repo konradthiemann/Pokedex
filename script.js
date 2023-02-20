@@ -52,7 +52,7 @@ async function loadPokemon() {
           <div class="chooseDetail" id="showDetailTwo${currentPokemon['id']}" onclick="openStats('Two', ${currentPokemon['id']})">
             Stats
           </div>
-          <div class="chooseDetail" id="showDetailThree${currentPokemon['id']}" onclick="openDetail('Three', ${currentPokemon['id']})">
+          <div class="chooseDetail" id="showDetailThree${currentPokemon['id']}" onclick="openMoves('Three', ${currentPokemon['id']})">
             Moves
           </div>
           <div class="container" id="container">
@@ -79,19 +79,16 @@ async function loadPokemon() {
   removeLoadingScreen();
 }
 
-
 function startLoadingScreen() {
 
   document.getElementById('loadingScreen').classList.remove('hide');
   document.getElementById('body').classList.add('overflowHidden');
 }
 
-
 function removeLoadingScreen() {
   document.getElementById('loadingScreen').classList.add('hide');
   document.getElementById('body').classList.remove('overflowHidden');
 }
-
 
 async function showDetails(currentPokemonId) {
   document.getElementById('body').classList.add('overflowHidden');
@@ -140,8 +137,6 @@ function openDetail(number, id) {
   }
 }
 
-
-
 function openAbout(number, id) {
   if (openDetailActive[id] != 1) {
     document.getElementById('showDetail' + number + id).classList.remove('showDetail' + number + id);
@@ -168,7 +163,7 @@ function openAbout(number, id) {
 }
 
 async function createAboutValues(id){
-  let singlePokemonUrl = (`${URL_API}` + `${id}`)
+    let singlePokemonUrl = (`${URL_API}` + `${id}`)
     let response = await fetch(singlePokemonUrl);
     let currentPokemon = await response.json();
 
@@ -189,7 +184,7 @@ async function createAboutValues(id){
         weight:
       </div>
       <div class="value">
-        ${currentPokemon['weight']}g
+        ${currentPokemon['weight']}kg
       </div>
     </div>
     `;
@@ -197,13 +192,13 @@ async function createAboutValues(id){
     document.getElementById('aboutValues'+ id).innerHTML += `
     <div class="aboutValue">
       <div class="valueName">
-        abilities:
+        <span>abilities: </span>
       </div>
       <div class="value" id="abilities${id}">
       </div>
     </div>
     `;
-    
+
     let abilities = '';
     for (let i = 0; i < currentPokemon['abilities'].length; i++) {
       let ability = currentPokemon['abilities'][i]['ability']['name'];
@@ -221,24 +216,101 @@ async function createEvolutionChain(id){
     evolutionChainURL = currentPokemonSpecies.evolution_chain['url'];
 
     let singlePokemonEvolutionChain = (`${evolutionChainURL}`);
-    let response = await fetch(singlePokemonEvolutionChain);
-    let currentPokemonEvolutionChain = await response.json();
+    let responseEvolutionChain = await fetch(singlePokemonEvolutionChain);
+    let currentPokemonEvolutionChain = await responseEvolutionChain.json();
 
-    document.getElementById('evolutionChain'+ id).innerHTML += `${currentPokemonEvolutionChain['chain']['species']['name']}`;
-    
-    
+    let singlePokemonUrl = (`${URL_API}` + `${id}`)
+    let response = await fetch(singlePokemonUrl);
+    let currentPokemon = await response.json();
+
     let evolutionChain =  currentPokemonEvolutionChain['chain']['evolves_to'];
-    if (evolutionChain[0]['evolves_to'].length == 0 ) {
-      document.getElementById('evolutionChain'+ id).innerHTML += `${currentPokemonEvolutionChain['chain']['evolves_to'][0]['species']['name']}`;
+    
+    if(evolutionChain.length == 0){
+      let nameToUpperCase = currentPokemonEvolutionChain['chain']['species']['name'].charAt(0).toUpperCase() + currentPokemonEvolutionChain['chain']['species']['name'].slice(1);
+
+      document.getElementById('evolutionChain'+ id).innerHTML += `
+      <div class="evolutionChainPokemonContainer">
+      ${nameToUpperCase}
+      <img class="evoImg" src="${currentPokemon['sprites']['other']['official-artwork']['front_default']}">
+      </div>
+      `;
+    }
+    else if (evolutionChain[0]['evolves_to'].length == 0 ) {
+
+      let baseEvolutionName = currentPokemonEvolutionChain['chain']['species']['name'];
+      let firstEvolutionName = currentPokemonEvolutionChain['chain']['evolves_to'][0]['species']['name'];
+
+      let baseEvolutionUrl = (`${URL_API}` + `${baseEvolutionName}`)
+      let responseBaseEvolution = await fetch(baseEvolutionUrl);
+      let baseEvolution = await responseBaseEvolution.json();
+
+      let baseEvolutionPicture = baseEvolution['sprites']['other']['official-artwork']['front_default'];
+
+      let firstEvolutionUrl = (`${URL_API}` + `${firstEvolutionName}`)
+      let responseFirstEvolution = await fetch(firstEvolutionUrl);
+      let firstEvolution = await responseFirstEvolution.json();
+
+      let firstEvolutionPicture = firstEvolution['sprites']['other']['official-artwork']['front_default'];
+
+      let baseEvolutionNameToUpperCase = baseEvolutionName.charAt(0).toUpperCase() + baseEvolutionName.slice(1);
+      let firstEvolutionNameToUpperCase = firstEvolutionName.charAt(0).toUpperCase() + firstEvolutionName.slice(1);
+
+      document.getElementById('evolutionChain'+ id).innerHTML += `
+      <div class="evolutionChainPokemonContainer">
+      ${baseEvolutionNameToUpperCase}
+      <img class="evoImg" src="${baseEvolutionPicture}">
+      </div>
+      <div class="evolutionChainPokemonContainer">
+      ${firstEvolutionNameToUpperCase}
+      <img class="evoImg" src="${firstEvolutionPicture}">
+      </div>
+      `;
     }
     else if (evolutionChain[0]['evolves_to'].length > 0) {
-      console.log('Im in this if-condition');
-      document.getElementById('evolutionChain'+ id).innerHTML += `${currentPokemonEvolutionChain['chain']['evolves_to'][0]['species']['name']}`;
-      document.getElementById('evolutionChain'+ id).innerHTML += `${currentPokemonEvolutionChain['chain']['evolves_to'][0]['evolves_to'][0]['species']['name']}`;
-    }
-    
-}
 
+      let baseEvolutionName = currentPokemonEvolutionChain['chain']['species']['name'];
+
+      let baseEvolutionUrl = (`${URL_API}` + `${baseEvolutionName}`)
+      let responseBaseEvolution = await fetch(baseEvolutionUrl);
+      let baseEvolution = await responseBaseEvolution.json();
+
+      let baseEvolutionPicture = baseEvolution['sprites']['other']['official-artwork']['front_default'];
+
+      let firstEvolutionName = currentPokemonEvolutionChain['chain']['evolves_to'][0]['species']['name'];
+      let secondEvolutionName = currentPokemonEvolutionChain['chain']['evolves_to'][0]['evolves_to'][0]['species']['name'];
+
+      let firstEvolutionUrl = (`${URL_API}` + `${firstEvolutionName}`)
+      let responseFirstEvolution = await fetch(firstEvolutionUrl);
+      let firstEvolution = await responseFirstEvolution.json();
+
+      let firstEvolutionPicture = firstEvolution['sprites']['other']['official-artwork']['front_default'];
+      
+      let secondEvolutionUrl = (`${URL_API}` + `${secondEvolutionName}`)
+      let responseSecondEvolution = await fetch(secondEvolutionUrl);
+      let secondEvolution = await responseSecondEvolution.json();
+
+      let secondEvolutionPicture = secondEvolution['sprites']['other']['official-artwork']['front_default'];
+      
+      let baseEvolutionNameToUpperCase = baseEvolutionName.charAt(0).toUpperCase() + baseEvolutionName.slice(1);
+      let firstEvolutionNameToUpperCase = firstEvolutionName.charAt(0).toUpperCase() + firstEvolutionName.slice(1);
+      let secondEvolutionNameToUpperCase = secondEvolutionName.charAt(0).toUpperCase() + secondEvolutionName.slice(1);
+
+      document.getElementById('evolutionChain'+ id).innerHTML += `
+      <div class="evolutionChainPokemonContainer">
+      ${baseEvolutionNameToUpperCase}
+      <img class="evoImg" src="${baseEvolutionPicture}">
+      </div>
+      <div class="evolutionChainPokemonContainer">
+        ${firstEvolutionNameToUpperCase}
+        <img class="evoImg" src="${firstEvolutionPicture}">
+      </div>  
+      <div class="evolutionChainPokemonContainer">
+      ${secondEvolutionNameToUpperCase}
+      <img class="evoImg" src="${secondEvolutionPicture}">
+      </div>
+      `;
+    }    
+}
 
 function openStats(number, id) {
   
@@ -260,28 +332,40 @@ function openStats(number, id) {
   }
 }
 
+async function openMoves(number, id) {
 
+  let singlePokemonUrl = (`${URL_API}` + `${id}`)
+  let response = await fetch(singlePokemonUrl);
+  let currentPokemon = await response.json();
 
-
-
-function openMoves(number, id) {
   if (openDetailActive[id] != 1) {
     document.getElementById('showDetail' + number + id).classList.remove('showDetail' + number + id);
     document.getElementById('showDetail' + number + id).classList.add('openDetail');
+    document.getElementById('showDetail' + number + id).innerHTML = `
+    <div class="headlineDetails">Moves</div>
+    <div class="containerForMoves" id="containerForMoves${id}"></div>
+    `;
+
+    for (let i = 0; i < currentPokemon['moves'].length; i++) {
+      document.getElementById('containerForMoves' + id).innerHTML += `
+      <div class="singleMove">
+        ${currentPokemon['moves'][i]['move']['name']}
+      </div>
+    `; 
+    } 
+
     openDetailActive[id] = 1;
   }else{
     document.getElementById('showDetail' + number + id).classList.remove('openDetail')
     document.getElementById('showDetail' + number + id).classList.add('showDetail' + number + id);
+    document.getElementById('showDetail' + number + id).innerHTML = `
+    Moves
+    `;
     openDetailActive[id] = 0;
   }
 }
 
-// open detail about
-    //height
-    //weight
-    //abilities
-// open detail base stats
-    //chartJS
+
 // open detail moves
     //list
 
@@ -333,5 +417,3 @@ window.onscroll = function () {
     }
   };
 }
-
-//evolution  https://pokeapi.co/api/v2/evolution-chain/1
